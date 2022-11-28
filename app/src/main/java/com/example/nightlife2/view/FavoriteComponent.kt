@@ -13,7 +13,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.nightlife2.model.Bar
+import com.example.nightlife2.repositories.Bar
 
 @Composable
 fun FavoriteComponent(bar: Bar, onButtonClick: () -> Unit) {

@@ -3,32 +3,47 @@ package com.example.nightlife2
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.nightlife2.model.NavigationItem
+import com.example.nightlife2.repositories.HomeRepository
 import com.example.nightlife2.ui.theme.NightLife2Theme
 import com.example.nightlife2.view.*
+import com.example.nightlife2.viewmodel.BarViewModel
 import com.example.nightlife2.viewmodel.HomeViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.coroutineScope
+import javax.inject.Inject
 
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject lateinit var homeRepository: HomeRepository
+    private val homeViewModel: HomeViewModel by viewModels()
+    private val barViewModel: BarViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             NightLife2Theme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+                    Screen(viewModel = homeViewModel, barViewModel)
                 }
             }
         }
@@ -36,17 +51,30 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Screen(viewModel: HomeViewModel) {
+fun Screen(viewModel: HomeViewModel, barViewModel: BarViewModel) {
     val navController = rememberNavController()
+    if (viewModel.loggedIn) {
         Scaffold(
             bottomBar = { NavBar(navController = navController) }
         ) {
-            NavigationGraph(navController = navController, viewModel)
+            NavigationGraph(navController = navController, viewModel, barViewModel)
         }
+    } else Login {
+        viewModel.logIn()
+    }
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController, viewModel: HomeViewModel) {
+fun Login(onButtonClick: () -> Unit) {
+    Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+        Button(onClick = {onButtonClick()}) {
+            Text(text = "Login")
+        }
+    }
+}
+
+@Composable
+fun NavigationGraph(navController: NavHostController, viewModel: HomeViewModel, barViewModel: BarViewModel) {
     NavHost(navController = navController, startDestination = NavigationItem.Home.route) {
         composable(NavigationItem.Home.route) {
             OverviewPage(viewModel = viewModel, navController)
@@ -64,7 +92,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: HomeViewModel) 
             NavigationItem.Bar.route,
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) {
-            ProfileScreen(id = it.arguments?.getInt("id"), navController)
+            ProfileScreen(id = it.arguments?.getInt("id"), navController, barViewModel)
         }
 
     }

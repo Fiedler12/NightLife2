@@ -2,6 +2,7 @@ package com.example.nightlife2.view
 
 import android.os.Build
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
@@ -13,7 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.example.nightlife2.model.Bar
+import com.example.nightlife2.repositories.Bar
 
 @Composable
 fun TrendyComponent(bar: Bar, onButtonClick: () -> Unit) {
@@ -23,7 +24,8 @@ fun TrendyComponent(bar: Bar, onButtonClick: () -> Unit) {
             .height(250.dp)
             .width(configuration.screenWidthDp.dp - 10.dp)
             .clip(RoundedCornerShape(10.dp))
-            .background(Color.LightGray)) {
+            .background(Color.LightGray)
+            .clickable { onButtonClick() }) {
             Column(modifier = Modifier.fillMaxSize()) {
                 Text(
                     text = bar.name,
