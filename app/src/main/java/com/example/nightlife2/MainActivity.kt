@@ -92,7 +92,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: HomeViewModel, 
             NavigationItem.Bar.route,
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) {
-            ProfileScreen(id = it.arguments?.getInt("id"), navController, barViewModel)
+            ProfileScreen(id = it.arguments!!.getInt("id"), navController, barViewModel)
         }
 
     }

@@ -6,5 +6,6 @@ import com.squareup.moshi.JsonClass
 data class BarDto (
     val id: Int,
     val name: String,
-    val rating: Double
+    val rating: Double,
+    val description: String
 )

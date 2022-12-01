@@ -7,6 +7,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.nightlife2.DAO.BarDao
 import com.example.nightlife2.model.User
 import com.example.nightlife2.repositories.HomeRepository
 import dagger.assisted.Assisted
@@ -25,7 +26,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository,
     var user = User(1, "TestUser")
 
     val barState by lazy {
-        repository.getBars()
+        repository.getBarsFromDb()
             .stateIn(viewModelScope, started = SharingStarted.WhileSubscribed(), emptyList())
     }
 

@@ -16,8 +16,9 @@ import com.example.nightlife2.repositories.Bar
 import com.example.nightlife2.viewmodel.BarViewModel
 
 @Composable
-fun ProfileScreen(id: Int?, navController: NavController, barViewModel: BarViewModel) {
-    val bar by barViewModel.barState.collectAsState()
+fun ProfileScreen(id: Int, navController: NavController, barViewModel: BarViewModel) {
+    barViewModel.fetchBar(id)
+    val bar = barViewModel.barFlow
     Column(modifier = Modifier.fillMaxSize()) {
         Button(onClick = { navController.popBackStack() }) {
             Text("<---")
@@ -35,5 +36,6 @@ fun ProfileScreen(id: Int?, navController: NavController, barViewModel: BarViewM
         Text(text = bar.rating.toString(),
             modifier = Modifier.padding(10.dp),
             style = MaterialTheme.typography.body1)
+        Text(text = bar.description, modifier = Modifier.padding(10.dp), style = MaterialTheme.typography.body1)
     }
 }

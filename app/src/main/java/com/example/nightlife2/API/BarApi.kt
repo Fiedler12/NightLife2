@@ -7,7 +7,7 @@ import retrofit2.http.Path
 import java.util.Objects
 
 interface BarApi {
-     @GET("api/bar/{id}")
+     @GET("api/bars/{id}")
      suspend fun getSpecificBar(@Path("id") id: Int): BarDto
 
      @GET("api/bars")
