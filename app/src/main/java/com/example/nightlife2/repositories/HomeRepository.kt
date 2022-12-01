@@ -4,6 +4,7 @@ import com.example.nightlife2.API.ApplicationIoScope
 import com.example.nightlife2.API.BarApi
 import com.example.nightlife2.DAO.BarDao
 import com.example.nightlife2.model.BarEntity
+import com.example.nightlife2.model.BarFTSEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,6 +60,11 @@ class HomeRepository @Inject internal constructor(private val barApi: BarApi, pr
 
     fun getBarFromDb(id: Int): Flow<Bar> = barDao.getSpecific(id).map {
         Bar(it.id, it.name, it.rating, it.description)
+    }
+    fun searchForBar(query: String): Flow<List<Bar>> = barDao.getMatchingBars(query).map { list ->
+        list.map {
+            Bar(it.id, it.name, it.rating, it.description)
+        }
     }
 }
 

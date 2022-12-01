@@ -14,21 +14,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.*
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.nightlife2.model.NavigationItem
 import com.example.nightlife2.repositories.HomeRepository
 import com.example.nightlife2.ui.theme.NightLife2Theme
 import com.example.nightlife2.view.*
 import com.example.nightlife2.viewmodel.BarViewModel
 import com.example.nightlife2.viewmodel.HomeViewModel
+import com.example.nightlife2.viewmodel.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 
@@ -37,13 +38,14 @@ class MainActivity : ComponentActivity() {
     @Inject lateinit var homeRepository: HomeRepository
     private val homeViewModel: HomeViewModel by viewModels()
     private val barViewModel: BarViewModel by viewModels()
+    private val searchViewModel: SearchViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             NightLife2Theme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    Screen(viewModel = homeViewModel, barViewModel)
+                    Screen(viewModel = homeViewModel, barViewModel, searchViewModel)
                 }
             }
         }
@@ -51,13 +53,13 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Screen(viewModel: HomeViewModel, barViewModel: BarViewModel) {
+fun Screen(viewModel: HomeViewModel, barViewModel: BarViewModel, searchViewModel: SearchViewModel) {
     val navController = rememberNavController()
     if (viewModel.loggedIn) {
         Scaffold(
             bottomBar = { NavBar(navController = navController) }
         ) {
-            NavigationGraph(navController = navController, viewModel, barViewModel)
+            NavigationGraph(navController = navController, viewModel, barViewModel, searchViewModel)
         }
     } else Login {
         viewModel.logIn()
@@ -74,16 +76,13 @@ fun Login(onButtonClick: () -> Unit) {
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController, viewModel: HomeViewModel, barViewModel: BarViewModel) {
+fun NavigationGraph(navController: NavHostController, viewModel: HomeViewModel, barViewModel: BarViewModel, searchViewModel: SearchViewModel) {
     NavHost(navController = navController, startDestination = NavigationItem.Home.route) {
         composable(NavigationItem.Home.route) {
             OverviewPage(viewModel = viewModel, navController)
         }
-        composable(NavigationItem.Map.route) {
-            MapPage()
-        }
         composable(NavigationItem.Search.route) {
-            SearchPage()
+            SearchPage(navController, searchViewModel = searchViewModel)
         }
         composable(NavigationItem.Settings.route) {
             SettingsPage()
@@ -102,7 +101,6 @@ fun NavigationGraph(navController: NavHostController, viewModel: HomeViewModel, 
 fun NavBar(navController: NavController) {
     val items = listOf(
         NavigationItem.Home,
-        NavigationItem.Map,
         NavigationItem.Search,
         NavigationItem.Settings
     )
@@ -131,18 +129,5 @@ fun NavBar(navController: NavController) {
                         restoreState = true
                     } })
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    NightLife2Theme {
-        Greeting("Android")
     }
 }

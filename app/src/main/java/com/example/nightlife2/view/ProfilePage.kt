@@ -2,6 +2,8 @@ package com.example.nightlife2.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -18,8 +20,10 @@ import com.example.nightlife2.viewmodel.BarViewModel
 @Composable
 fun ProfileScreen(id: Int, navController: NavController, barViewModel: BarViewModel) {
     barViewModel.fetchBar(id)
+    barViewModel.fetchReviews(id)
     val bar = barViewModel.barFlow
-    Column(modifier = Modifier.fillMaxSize()) {
+    val reviews = barViewModel.reviewFlow
+    Column(modifier = Modifier.fillMaxWidth()) {
         Button(onClick = { navController.popBackStack() }) {
             Text("<---")
         }
@@ -37,5 +41,16 @@ fun ProfileScreen(id: Int, navController: NavController, barViewModel: BarViewMo
             modifier = Modifier.padding(10.dp),
             style = MaterialTheme.typography.body1)
         Text(text = bar.description, modifier = Modifier.padding(10.dp), style = MaterialTheme.typography.body1)
+        Text(text = "Reviews", modifier = Modifier.padding(10.dp), style = MaterialTheme.typography.h5)
+        LazyColumn(
+            Modifier
+                .height(300.dp)
+                .fillMaxWidth()
+                .padding(10.dp)) {
+            items(reviews) {item ->
+                ReviewComponent(review = item)
+            }
+
+        }
     }
 }

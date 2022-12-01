@@ -27,10 +27,15 @@ object DatabaseModule {
             AppDatabase::class.java,
             "bar.db"
         )
+            .fallbackToDestructiveMigration()
             .build()
     }
 
     @Singleton
     @Provides
     fun provideBarDao(database: AppDatabase) = database.barDao()
+
+    @Singleton
+    @Provides
+    fun provideReviewDao(database: AppDatabase) = database.reviewDao()
 }

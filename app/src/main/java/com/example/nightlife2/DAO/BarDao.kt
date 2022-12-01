@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.nightlife2.model.BarEntity
 import kotlinx.coroutines.flow.Flow
-import retrofit2.http.GET
 
 @Dao
 interface BarDao {
@@ -25,4 +24,7 @@ interface BarDao {
 
     @Query("SELECT * FROM bar where id = :id")
     fun getSpecific(id: Int): Flow<BarEntity>
+
+    @Query("SELECT * FROM bar JOIN bar_fts ON bar.id = bar_fts.id WHERE bar_fts.name MATCH :query")
+    fun getMatchingBars(query: String): Flow<List<BarEntity>>
 }

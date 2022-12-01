@@ -48,7 +48,7 @@ fun TrendyComponent(bar: Bar, onButtonClick: () -> Unit) {
                     style = MaterialTheme.typography.body1
                 )
                 Text(
-                    text = "Some description saying some shit about some shit. This is just to fill it out in some way so I can see how it looks like.",
+                    text = bar.description,
                     modifier = Modifier.padding(10.dp),
                     style = MaterialTheme.typography.caption
                 )

@@ -1,6 +1,7 @@
 package com.example.nightlife2.API
 
 import com.example.nightlife2.model.BarDto
+import com.example.nightlife2.model.ReviewDto
 import okhttp3.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -15,4 +16,10 @@ interface BarApi {
 
      @GET("api/test")
      suspend fun getTest(): String
+
+     @GET("api/review/{id}")
+     suspend fun getReviewsForBar(@Path("id") id: Int): List<ReviewDto>
+
+     @GET("api/review")
+     suspend fun getAllReviews(): List<ReviewDto>
 }
